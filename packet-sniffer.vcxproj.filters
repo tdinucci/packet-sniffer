@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="link">
+      <UniqueIdentifier>{a579915a-35fe-4c31-b8b2-9b03d8194688}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="network">
+      <UniqueIdentifier>{2f86a395-37c6-4cc6-8f65-e51dbf3f1b10}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="transport">
+      <UniqueIdentifier>{01eee643-4f15-4133-9505-e9f8f816b3e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="app">
+      <UniqueIdentifier>{574a30f7-f389-43a0-ba55-a3cfe6cc5dcf}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="link\ethernet-frame.cpp">
+      <Filter>link</Filter>
+    </ClCompile>
+    <ClCompile Include="network\arp-packet.cpp">
+      <Filter>network</Filter>
+    </ClCompile>
+    <ClCompile Include="transport\tcp-segment.cpp">
+      <Filter>transport</Filter>
+    </ClCompile>
+    <ClCompile Include="network\ip-packet.cpp">
+      <Filter>network</Filter>
+    </ClCompile>
+    <ClCompile Include="transport\udp-message.cpp">
+      <Filter>transport</Filter>
+    </ClCompile>
+    <ClCompile Include="http-message.cpp">
+      <Filter>app</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="link\ethernet-frame.h">
+      <Filter>link</Filter>
+    </ClInclude>
+    <ClInclude Include="network\arp-packet.h">
+      <Filter>network</Filter>
+    </ClInclude>
+    <ClInclude Include="transport\tcp-segment.h">
+      <Filter>transport</Filter>
+    </ClInclude>
+    <ClInclude Include="network\ip-packet.h">
+      <Filter>network</Filter>
+    </ClInclude>
+    <ClInclude Include="transport\udp-message.h">
+      <Filter>transport</Filter>
+    </ClInclude>
+    <ClInclude Include="http-message.h">
+      <Filter>app</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

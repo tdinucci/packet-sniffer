@@ -5,12 +5,12 @@
 #include "../util.h"
 #include "ethernet-frame.h"
 
-EthernetFrame::EthernetFrame(unique_ptr<vector<uint8_t>> packet) {
-  auto piter = packet->begin();
+EthernetFrame::EthernetFrame(shared_ptr<vector<uint8_t>> frame) {
+  auto frame_iter = frame->begin();
 
-  auto raw_src = piter;
-  auto raw_dest = piter + 6;
-  auto raw_protocol = piter + 12;
+  auto raw_src = frame_iter;
+  auto raw_dest = frame_iter + 6;
+  auto raw_protocol = frame_iter + 12;
 
   stringstream dest_ss, source_ss;
   for (auto i = 0; i < 6; i++) {
@@ -30,7 +30,7 @@ EthernetFrame::EthernetFrame(unique_ptr<vector<uint8_t>> packet) {
   length = 14;  // TODO: need to account for 802.1Q
 
   payload = shared_ptr<vector<uint8_t>>(
-      new vector<uint8_t>(piter + length, packet->end()));
+      new vector<uint8_t>(frame_iter + length, frame->end()));
 }
 
 string EthernetFrame::get_dest() { return dest; }
@@ -39,7 +39,7 @@ string EthernetFrame::get_source() { return source; }
 
 uint16_t EthernetFrame::get_protcol() { return protocol; }
 
-uint8_t EthernetFrame::get_length() { return length; }
+uint16_t EthernetFrame::get_length() { return length; }
 
 shared_ptr<vector<uint8_t>> EthernetFrame::get_payload() { return payload; }
 

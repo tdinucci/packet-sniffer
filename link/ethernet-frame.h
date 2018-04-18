@@ -23,12 +23,13 @@ class EthernetFrame {
  public:
   static string get_protocol_description(uint16_t code);
 
-  explicit EthernetFrame(unique_ptr<vector<uint8_t>> packet);
+  explicit EthernetFrame(shared_ptr<vector<uint8_t>> frame);
 
   string get_dest();
   string get_source();
   uint16_t get_protcol();
-  uint8_t get_length();
+  uint16_t get_length();
+  
   shared_ptr<vector<uint8_t>> get_payload();
 
   void dump();

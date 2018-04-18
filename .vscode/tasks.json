@@ -6,7 +6,7 @@
       {
           "label": "elf-inspector",
           "type": "shell",
-          "command": "g++ -g -Wall -std=c++17 util.c link/ethernet-frame.cpp network/arp-packet.cpp main.cpp",
+          "command": "g++ -g -Wall -std=c++17 util.cpp link/ethernet-frame.cpp network/arp-packet.cpp network/ip-packet.cpp transport/tcp-segment.cpp transport/udp-message.cpp  main.cpp",
           "group": {
               "kind": "build",
               "isDefault": true
