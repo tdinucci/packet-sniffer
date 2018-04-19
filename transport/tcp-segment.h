@@ -5,9 +5,11 @@
 #include <memory>
 #include <vector>
 
+#include "../protocol.h"
+
 using namespace std;
 
-class TcpSegment {
+class TcpSegment : public Protocol {
  private:
   uint16_t source_port;
   uint16_t dest_port;
@@ -54,7 +56,8 @@ class TcpSegment {
 
   shared_ptr<vector<uint8_t>> get_payload();
 
-  void dump();
+  shared_ptr<Protocol> get_inner_protocol() override;
+  string get_description() override;
 };
 
 #endif

@@ -1,14 +1,18 @@
-#ifndef IP_HEADER_H_
-#define IP_HEADER_H_
+#ifndef IP_PACKET_H_
+#define IP_PACKET_H_
 
 #include <string>
 #include <memory>
 
+#include "../protocol.h"
 #include "../util.h"
+
+#define IP_UDP 0x11
+#define IP_TCP 0x06
 
 using namespace std;
 
-class IpPacket {
+class IpPacket : public Protocol {
  private:
   uint8_t version;
   uint8_t header_length;
@@ -23,6 +27,7 @@ class IpPacket {
   string dest_ip;
 
   shared_ptr<vector<uint8_t>> payload;
+  shared_ptr<Protocol> inner_protocol;
 
  public:
   explicit IpPacket(shared_ptr<vector<uint8_t>> packet);
@@ -41,7 +46,8 @@ class IpPacket {
 
   shared_ptr<vector<uint8_t>> get_payload();
 
-  void dump();
+  shared_ptr<Protocol> get_inner_protocol() override;
+  string get_description() override;
 };
 
 #endif

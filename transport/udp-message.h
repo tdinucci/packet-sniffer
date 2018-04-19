@@ -1,13 +1,15 @@
-#ifndef UDP_HEADER_H_
-#define UDP_HEADER_H_
+#ifndef UDP_MESSAGE_H_
+#define UDP_MESSAGE_H_
 
 #include <cstdint>
 #include <memory>
 #include <vector>
 
+#include "../protocol.h"
+
 using namespace std;
 
-class UdpMessage {
+class UdpMessage : public Protocol {
  private:
   uint16_t source_port;
   uint16_t dest_port;
@@ -26,7 +28,8 @@ class UdpMessage {
 
   shared_ptr<vector<uint8_t>> get_payload();
 
-  void dump();
+  shared_ptr<Protocol> get_inner_protocol() override;
+  string get_description() override;
 };
 
 #endif

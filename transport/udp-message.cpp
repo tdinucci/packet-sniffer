@@ -1,5 +1,6 @@
+#include <stdexcept>
 #include <cstdint>
-#include <iostream>
+#include <sstream>
 
 #include "udp-message.h"
 #include "../util.h"
@@ -7,6 +8,8 @@
 using namespace std;
 
 UdpMessage::UdpMessage(shared_ptr<vector<uint8_t>> message) {
+	if (message == nullptr) throw runtime_error("Supplied UDP message was null");
+
 	auto msg_iter = message->begin();
 
 	source_port = ntohs(msg_iter);
@@ -27,14 +30,26 @@ uint16_t UdpMessage::get_checksum() { return checksum; }
 
 shared_ptr<vector<uint8_t>> UdpMessage::get_payload() { return payload; }
 
-void UdpMessage::dump() {
-	cout << "UDP Header" << endl;
-	cout << "\tSource Port: " << dec << (int)source_port << endl;
-	cout << "\tDestination Port: " << dec << (int)dest_port << endl;
-	cout << "\tLength:" << dec << (int)length << endl;
+shared_ptr<Protocol> UdpMessage::get_inner_protocol() {
+	return nullptr;
+}
 
-	for (auto b : *payload)
-		cout << (char)b;
+string UdpMessage::get_description() {
+	stringstream desc_ss;
 
-	cout << endl;
+	desc_ss << "UDP Header" << endl;
+	desc_ss << "\tSource Port: " << dec << (int)source_port << endl;
+	desc_ss << "\tDestination Port: " << dec << (int)dest_port << endl;
+	desc_ss << "\tLength:" << dec << (int)length << endl;
+
+	auto inner_protocol = get_inner_protocol();
+	if (inner_protocol != nullptr)
+		desc_ss << inner_protocol->get_description();
+	else {
+		for (auto b : *payload)
+			desc_ss << (char)b;
+		desc_ss << endl;
+	}
+
+	return desc_ss.str();
 }

@@ -1,3 +1,4 @@
+#include <stdexcept>
 #include <sstream>
 #include <tuple>
 
@@ -11,6 +12,8 @@ tuple<string, string> get_software_addresses(shared_ptr<vector<uint8_t>> packet,
                                              uint8_t addr_len);
 
 ArpPacket::ArpPacket(shared_ptr<vector<uint8_t>> packet) {
+  if (packet == nullptr) throw runtime_error("Supplied ARP packet was null");
+	
   auto piter = packet->begin();
 
   hardware_type = ntohs(piter);
@@ -38,6 +41,10 @@ string ArpPacket::get_sender_protocol_addr() { return sender_protocol_addr; }
 string ArpPacket::get_target_hardware_addr() { return target_hardware_addr; }
 string ArpPacket::get_target_protocol_addr() { return target_protocol_addr; }
 
+shared_ptr<Protocol> ArpPacket::get_inner_protocol() {
+	return nullptr;
+}
+
 string ArpPacket::get_description() {
   stringstream result_ss;
   result_ss << "ARP Packet" << endl;
@@ -52,7 +59,7 @@ string ArpPacket::get_description() {
   result_ss << "\tHardware Type: 0x" << hex << (int)hardware_type
             << hardware_desc << endl;
 
-  auto protocol_desc = EthernetFrame::get_protocol_description(protocol_type);
+  auto protocol_desc = EthernetFrame::get_protocol_name(protocol_type);
   result_ss << "\tProtocol Type: 0x" << hex << (int)protocol_type << " ["
             << protocol_desc << "]" << endl;
 

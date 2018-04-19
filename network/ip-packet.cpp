@@ -1,11 +1,15 @@
+#include <stdexcept>
 #include <cstring>
-#include <iostream>
 #include <sstream>
 
 #include "ip-packet.h"
+#include "../transport/udp-message.h"
+#include "../transport/tcp-segment.h"
 #include "../util.h"
 
 IpPacket::IpPacket(shared_ptr<vector<uint8_t>> packet) {
+	if (packet == nullptr) throw runtime_error("Supplied IP packet was null");
+
 	auto pac_iter = packet->begin();
 
 	// TODO: big endian machines?
@@ -52,16 +56,41 @@ string IpPacket::get_source_ip() { return source_ip; }
 string IpPacket::get_dest_ip() { return dest_ip; }
 shared_ptr<vector<uint8_t>> IpPacket::get_payload() { return payload; }
 
-void IpPacket::dump() {
-  cout << "IP Header" << endl;
-  cout << "\tVersion: " << dec << (int)version << endl;
-  cout << "\tLength: " << dec << (int)header_length << endl;
-  cout << "\tDSCP: 0x" << hex << (int)dscp << endl;
-  cout << "\tPacket Length: " << dec << (int)packet_length << endl;
-  cout << "\tIdentification: 0x" << hex << (int)id << endl;
-  cout << "\tTime To Live: " << dec << (int)ttl << endl;
-  cout << "\tProtocol: 0x" << hex << (int)protocol << endl;
-  cout << "\tHeader Checksum: 0x" << hex << (int)checksum << endl;
-  cout << "\tSource IP: " << source_ip << endl;
-  cout << "\tDestination IP: " << dest_ip << endl;
+shared_ptr<Protocol> IpPacket::get_inner_protocol() {
+	if (inner_protocol == nullptr) {
+		if (protocol == IP_UDP) {
+			inner_protocol = shared_ptr<UdpMessage>(new UdpMessage(payload));
+		}
+		else if (protocol == IP_TCP) {
+			inner_protocol = shared_ptr<TcpSegment>(new TcpSegment(payload));
+		}
+	}
+
+	return inner_protocol;
+}
+
+string IpPacket::get_description() {
+	stringstream desc_ss;
+	desc_ss << "IP Header" << endl;
+	desc_ss << "\tVersion: " << dec << (int)version << endl;
+	desc_ss << "\tLength: " << dec << (int)header_length << endl;
+	desc_ss << "\tDSCP: 0x" << hex << (int)dscp << endl;
+	desc_ss << "\tPacket Length: " << dec << (int)packet_length << endl;
+	desc_ss << "\tIdentification: 0x" << hex << (int)id << endl;
+	desc_ss << "\tTime To Live: " << dec << (int)ttl << endl;
+	desc_ss << "\tProtocol: 0x" << hex << (int)protocol << endl;
+	desc_ss << "\tHeader Checksum: 0x" << hex << (int)checksum << endl;
+	desc_ss << "\tSource IP: " << source_ip << endl;
+	desc_ss << "\tDestination IP: " << dest_ip << endl;
+
+	auto inner_protocol = get_inner_protocol();
+	if (inner_protocol != nullptr)
+		desc_ss << inner_protocol->get_description();
+	else {
+		for (auto b : *payload)
+			desc_ss << hex << (int)b;
+		desc_ss << endl;
+	}
+
+	return desc_ss.str();
 }

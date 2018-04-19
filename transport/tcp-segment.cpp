@@ -1,5 +1,5 @@
-#include <iostream>
 #include <stdexcept>
+#include <sstream>
 
 #include "tcp-segment.h"
 #include "../util.h"
@@ -7,7 +7,7 @@
 using namespace std;
 
 TcpSegment::TcpSegment(shared_ptr<vector<uint8_t>> segment) {
-	if (segment == nullptr) throw runtime_error("Supplied segment is NULL");
+	if (segment == nullptr) throw runtime_error("Supplied TCP segment was null");
 
 	auto seg_iter = segment->begin();
 
@@ -55,24 +55,35 @@ uint16_t TcpSegment::get_urg_ptr() { return urg_ptr; }
 
 shared_ptr<vector<uint8_t>> TcpSegment::get_payload() { return payload; }
 
-void TcpSegment::dump() {
-	cout << "TCP Header" << endl;
+shared_ptr<Protocol> TcpSegment::get_inner_protocol() {
+	return nullptr;
+}
 
-	cout << "\tSource Port: " << dec << (int)source_port << endl;
-	cout << "\tDestination Port: " << dec << (int)dest_port << endl;
-	cout << "\tSequence: " << dec << (uint32_t)sequence << endl;
-	cout << "\tACK Sequence: " << dec << (uint32_t)ack_sequence << endl;
-	cout << "\tData Offset: " << dec << (int)data_offset << endl;
+string TcpSegment::get_description() {
+	stringstream desc_ss;
 
-	cout << "\tFlags: "
+	desc_ss << "TCP Header" << endl;
+
+	desc_ss << "\tSource Port: " << dec << (int)source_port << endl;
+	desc_ss << "\tDestination Port: " << dec << (int)dest_port << endl;
+	desc_ss << "\tSequence: " << dec << (uint32_t)sequence << endl;
+	desc_ss << "\tACK Sequence: " << dec << (uint32_t)ack_sequence << endl;
+	desc_ss << "\tData Offset: " << dec << (int)data_offset << endl;
+
+	desc_ss << "\tFlags: "
 		<< "[SYN - " << (bool)flag_syn << "], "
 		<< "[ACK - " << (bool)flag_ack << "], "
 		<< "[PSH - " << (bool)flag_psh << "]"
 		<< "[FIN - " << (bool)flag_fin << "]" << endl;
 
-	for (auto b : *payload)
-		cout << (char)b;
-	cout << endl;
+	auto inner_protocol = get_inner_protocol();
+	if (inner_protocol != nullptr)
+		desc_ss << inner_protocol->get_description();
+	else {
+		for (auto b : *payload)
+			desc_ss << (char)b;
+		desc_ss << endl;
+	}
 
-	// if (data_len > 0) printf("\t|Data (%d):\n%s\n", data_len, data);
+	return desc_ss.str();
 }

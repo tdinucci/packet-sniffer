@@ -10,8 +10,11 @@
     <Filter Include="transport">
       <UniqueIdentifier>{01eee643-4f15-4133-9505-e9f8f816b3e2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="app">
-      <UniqueIdentifier>{574a30f7-f389-43a0-ba55-a3cfe6cc5dcf}</UniqueIdentifier>
+    <Filter Include="windows">
+      <UniqueIdentifier>{554d0e7c-7410-45a6-ac91-c73fa5523786}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="linux">
+      <UniqueIdentifier>{a45c777f-1776-4513-a334-2dcd192a6ac2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -30,8 +33,20 @@
     <ClCompile Include="transport\udp-message.cpp">
       <Filter>transport</Filter>
     </ClCompile>
-    <ClCompile Include="http-message.cpp">
-      <Filter>app</Filter>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="util.cpp" />
+    <ClCompile Include="raw-socket.cpp" />
+    <ClCompile Include="linux\linux-bootstrapper.cpp">
+      <Filter>linux</Filter>
+    </ClCompile>
+    <ClCompile Include="windows\windows-bootstrapper.cpp">
+      <Filter>windows</Filter>
+    </ClCompile>
+    <ClCompile Include="windows\windows-socket.cpp">
+      <Filter>windows</Filter>
+    </ClCompile>
+    <ClCompile Include="linux\linux-socket.cpp">
+      <Filter>linux</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -50,8 +65,21 @@
     <ClInclude Include="transport\udp-message.h">
       <Filter>transport</Filter>
     </ClInclude>
-    <ClInclude Include="http-message.h">
-      <Filter>app</Filter>
+    <ClInclude Include="util.h" />
+    <ClInclude Include="bootstrapper.h" />
+    <ClInclude Include="protocol.h" />
+    <ClInclude Include="raw-socket.h" />
+    <ClInclude Include="linux\linux-bootstrapper.h">
+      <Filter>linux</Filter>
+    </ClInclude>
+    <ClInclude Include="windows\windows-bootstrapper.h">
+      <Filter>windows</Filter>
+    </ClInclude>
+    <ClInclude Include="windows\windows-socket.h">
+      <Filter>windows</Filter>
+    </ClInclude>
+    <ClInclude Include="linux\linux-socket.h">
+      <Filter>linux</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -84,6 +84,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalOptions>/std:c++14 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -115,24 +116,33 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="http-message.cpp" />
     <ClCompile Include="link\ethernet-frame.cpp" />
+    <ClCompile Include="linux\linux-socket.cpp" />
+    <ClCompile Include="linux\linux-bootstrapper.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="network\arp-packet.cpp" />
     <ClCompile Include="network\ip-packet.cpp" />
+    <ClCompile Include="raw-socket.cpp" />
     <ClCompile Include="transport\tcp-segment.cpp" />
     <ClCompile Include="transport\udp-message.cpp" />
     <ClCompile Include="util.cpp" />
+    <ClCompile Include="windows\windows-bootstrapper.cpp" />
+    <ClCompile Include="windows\windows-socket.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="http-message.h" />
+    <ClInclude Include="bootstrapper.h" />
     <ClInclude Include="link\ethernet-frame.h" />
+    <ClInclude Include="linux\linux-socket.h" />
+    <ClInclude Include="linux\linux-bootstrapper.h" />
     <ClInclude Include="network\arp-packet.h" />
     <ClInclude Include="network\ip-packet.h" />
-    <ClInclude Include="packet.h" />
+    <ClInclude Include="protocol.h" />
+    <ClInclude Include="raw-socket.h" />
     <ClInclude Include="transport\tcp-segment.h" />
     <ClInclude Include="transport\udp-message.h" />
     <ClInclude Include="util.h" />
+    <ClInclude Include="windows\windows-bootstrapper.h" />
+    <ClInclude Include="windows\windows-socket.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

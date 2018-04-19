@@ -1,14 +1,14 @@
-#ifndef ARP_HEADER_H_
-#define ARP_HEADER_H_
+#ifndef ARP_PACKET_H_
+#define ARP_PACKET_H_
 
 #include <vector>
 #include <cstdint>
 #include <string>
-#include "../packet.h"
+#include "../protocol.h"
 
 using namespace std;
 
-class ArpPacket : public Packet {
+class ArpPacket : public Protocol {
  private:
   uint16_t hardware_type;
   uint16_t protocol_type;
@@ -33,6 +33,7 @@ class ArpPacket : public Packet {
   string get_target_hardware_addr();
   string get_target_protocol_addr();
 
+  shared_ptr<Protocol> get_inner_protocol() override;
   string get_description() override;
 };
 

@@ -1,11 +1,14 @@
-#include <iostream>
+#include <stdexcept>
 #include <sstream>
-#include <valarray>
 
-#include "../util.h"
 #include "ethernet-frame.h"
+#include "../network/arp-packet.h"
+#include "../network/ip-packet.h"
+#include "../util.h"
 
 EthernetFrame::EthernetFrame(shared_ptr<vector<uint8_t>> frame) {
+  if (frame == nullptr) throw runtime_error("Supplied Ethernet frame was null");
+
   auto frame_iter = frame->begin();
 
   auto raw_src = frame_iter;
@@ -43,16 +46,40 @@ uint16_t EthernetFrame::get_length() { return length; }
 
 shared_ptr<vector<uint8_t>> EthernetFrame::get_payload() { return payload; }
 
-void EthernetFrame::dump() {
-  cout << "Ethernet" << endl;
-  cout << "\tSource: " << source << endl;
-  cout << "\tDestination: " << dest << endl;
-  cout << "\tProtocol: 0x" << hex << protocol << " ["
-       << get_protocol_description(protocol) << "]" << endl;
-  cout << "\tLength: " << dec << (int)length << endl;
+shared_ptr<Protocol> EthernetFrame::get_inner_protocol() {
+	if (inner_protocol == nullptr) {
+		if (protocol == ETH_ARP)
+			inner_protocol = shared_ptr<ArpPacket>(new ArpPacket(payload));
+		else if (protocol == ETH_IP4)
+			inner_protocol = shared_ptr<IpPacket>(new IpPacket(payload));
+	}
+
+	return inner_protocol;
 }
 
-string EthernetFrame::get_protocol_description(uint16_t code) {
+string EthernetFrame::get_description() {
+	stringstream desc_ss;
+
+	desc_ss << "Ethernet" << endl;
+	desc_ss << "\tSource: " << source << endl;
+	desc_ss << "\tDestination: " << dest << endl;
+	desc_ss << "\tProtocol: 0x" << hex << protocol << " ["
+		<< get_protocol_name(protocol) << "]" << endl;
+	desc_ss << "\tLength: " << dec << (int)length << endl;
+
+	auto inner_protocol = get_inner_protocol();
+	if (inner_protocol != nullptr)
+		desc_ss << inner_protocol->get_description();
+	else {
+		for (auto b : *payload)
+			desc_ss << hex << (int)b;
+		desc_ss << endl;
+	}
+
+	return desc_ss.str();
+}
+
+string EthernetFrame::get_protocol_name(uint16_t code) {
   switch (code) {
     case ETH_IP4:
       return "IPv4";
