@@ -50,7 +50,7 @@ int main() {
 
     return 0;
   } catch (const std::exception& e) {
-    cout << "An error occurred (ensure running as root): " << endl
+    cout << "An error occurred (ensure running as root/admin): " << endl
          << e.what() << endl;
     return 1;
   }
