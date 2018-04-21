@@ -1,10 +1,12 @@
-#include <stdexcept>
 #include <sstream>
+#include <stdexcept>
 
-#include "ethernet-frame.h"
 #include "../network/arp-packet.h"
 #include "../network/ip-packet.h"
 #include "../util.h"
+#include "ethernet-frame.h"
+
+using namespace sniff;
 
 EthernetFrame::EthernetFrame(shared_ptr<vector<uint8_t>> frame) {
   if (frame == nullptr) throw runtime_error("Supplied Ethernet frame was null");
@@ -47,36 +49,35 @@ uint16_t EthernetFrame::get_length() { return length; }
 shared_ptr<vector<uint8_t>> EthernetFrame::get_payload() { return payload; }
 
 shared_ptr<Protocol> EthernetFrame::get_inner_protocol() {
-	if (inner_protocol == nullptr) {
-		if (protocol == ETH_ARP)
-			inner_protocol = shared_ptr<ArpPacket>(new ArpPacket(payload));
-		else if (protocol == ETH_IP4)
-			inner_protocol = shared_ptr<IpPacket>(new IpPacket(payload));
-	}
+  if (inner_protocol == nullptr) {
+    if (protocol == ETH_ARP)
+      inner_protocol = shared_ptr<ArpPacket>(new ArpPacket(payload));
+    else if (protocol == ETH_IP4)
+      inner_protocol = shared_ptr<IpPacket>(new IpPacket(payload));
+  }
 
-	return inner_protocol;
+  return inner_protocol;
 }
 
 string EthernetFrame::get_description() {
-	stringstream desc_ss;
+  stringstream desc_ss;
 
-	desc_ss << "Ethernet" << endl;
-	desc_ss << "\tSource: " << source << endl;
-	desc_ss << "\tDestination: " << dest << endl;
-	desc_ss << "\tProtocol: 0x" << hex << protocol << " ["
-		<< get_protocol_name(protocol) << "]" << endl;
-	desc_ss << "\tLength: " << dec << (int)length << endl;
+  desc_ss << "Ethernet" << endl;
+  desc_ss << "\tSource: " << source << endl;
+  desc_ss << "\tDestination: " << dest << endl;
+  desc_ss << "\tProtocol: 0x" << hex << protocol << " ["
+          << get_protocol_name(protocol) << "]" << endl;
+  desc_ss << "\tLength: " << dec << (int)length << endl;
 
-	auto inner_protocol = get_inner_protocol();
-	if (inner_protocol != nullptr)
-		desc_ss << inner_protocol->get_description();
-	else {
-		for (auto b : *payload)
-			desc_ss << hex << (int)b;
-		desc_ss << endl;
-	}
+  auto inner_protocol = get_inner_protocol();
+  if (inner_protocol != nullptr)
+    desc_ss << inner_protocol->get_description();
+  else {
+    for (auto b : *payload) desc_ss << hex << (int)b;
+    desc_ss << endl;
+  }
 
-	return desc_ss.str();
+  return desc_ss.str();
 }
 
 string EthernetFrame::get_protocol_name(uint16_t code) {

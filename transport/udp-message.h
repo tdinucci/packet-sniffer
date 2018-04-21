@@ -9,6 +9,7 @@
 
 using namespace std;
 
+namespace sniff {
 class UdpMessage : public Protocol {
  private:
   uint16_t source_port;
@@ -31,5 +32,6 @@ class UdpMessage : public Protocol {
   shared_ptr<Protocol> get_inner_protocol() override;
   string get_description() override;
 };
+}  // namespace sniff
 
 #endif

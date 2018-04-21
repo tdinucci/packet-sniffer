@@ -13,13 +13,15 @@
 
 using namespace std;
 
+namespace sniff {
 class Bootstrapper {
-public:
-	Bootstrapper() {}
-	virtual ~Bootstrapper() {}
+ public:
+  Bootstrapper() {}
+  virtual ~Bootstrapper() {}
 
-	virtual sockaddr_in get_network_iterface() = 0;
-	virtual unique_ptr<RawSocket> get_socket(const sockaddr& bind_to) = 0;
+  virtual sockaddr_in get_network_iterface() = 0;
+  virtual unique_ptr<RawSocket> get_socket(const sockaddr& bind_to) = 0;
 };
+}  // namespace sniff
 
 #endif

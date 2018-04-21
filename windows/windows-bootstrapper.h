@@ -5,14 +5,16 @@
 
 #include "../bootstrapper.h"
 
+namespace sniff {
 class WindowsBootstrapper : public Bootstrapper {
-public:
-	WindowsBootstrapper();
-	virtual ~WindowsBootstrapper();
+ public:
+  WindowsBootstrapper();
+  virtual ~WindowsBootstrapper();
 
-	sockaddr_in get_network_iterface() override;
-	unique_ptr<RawSocket> get_socket(const sockaddr& bind_to) override;
+  sockaddr_in get_network_iterface() override;
+  unique_ptr<RawSocket> get_socket(const sockaddr& bind_to) override;
 };
+}  // namespace sniff
 
-#endif 
+#endif
 #endif

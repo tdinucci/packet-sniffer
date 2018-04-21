@@ -1,37 +1,39 @@
-#include <stdexcept>
 #include <sstream>
+#include <stdexcept>
 
-#include "tcp-segment.h"
 #include "../util.h"
+#include "tcp-segment.h"
 
 using namespace std;
+using namespace sniff;
 
 TcpSegment::TcpSegment(shared_ptr<vector<uint8_t>> segment) {
-	if (segment == nullptr) throw runtime_error("Supplied TCP segment was null");
+  if (segment == nullptr) throw runtime_error("Supplied TCP segment was null");
 
-	auto seg_iter = segment->begin();
+  auto seg_iter = segment->begin();
 
-	source_port = ntohs(seg_iter);
-	dest_port = ntohs(seg_iter + 2);
-	sequence = ntohi(seg_iter + 4);
-	ack_sequence = ntohi(seg_iter + 8);
-	data_offset = (segment->at(12) >> 4) * 4;  // this is count of 32 bit words
+  source_port = ntohs(seg_iter);
+  dest_port = ntohs(seg_iter + 2);
+  sequence = ntohi(seg_iter + 4);
+  ack_sequence = ntohi(seg_iter + 8);
+  data_offset = (segment->at(12) >> 4) * 4;  // this is count of 32 bit words
 
-	auto flags = segment->at(13);
-	flag_cwr = flags >> 7 & 0x01;
-	flag_ece = flags >> 6 & 0x01;
-	flag_urg = flags >> 5 & 0x01;
-	flag_ack = flags >> 4 & 0x01;
-	flag_psh = flags >> 3 & 0x01;
-	flag_rst = flags >> 2 & 0x01;
-	flag_syn = flags >> 1 & 0x01;
-	flag_fin = flags & 0x01;
+  auto flags = segment->at(13);
+  flag_cwr = flags >> 7 & 0x01;
+  flag_ece = flags >> 6 & 0x01;
+  flag_urg = flags >> 5 & 0x01;
+  flag_ack = flags >> 4 & 0x01;
+  flag_psh = flags >> 3 & 0x01;
+  flag_rst = flags >> 2 & 0x01;
+  flag_syn = flags >> 1 & 0x01;
+  flag_fin = flags & 0x01;
 
-	window = ntohs(seg_iter + 14);
-	checksum = ntohs(seg_iter + 16);
-	urg_ptr = ntohs(seg_iter + 16);
+  window = ntohs(seg_iter + 14);
+  checksum = ntohs(seg_iter + 16);
+  urg_ptr = ntohs(seg_iter + 16);
 
-	payload = shared_ptr<vector<uint8_t>>(new vector<uint8_t>(seg_iter + data_offset, segment->end()));
+  payload = shared_ptr<vector<uint8_t>>(
+      new vector<uint8_t>(seg_iter + data_offset, segment->end()));
 }
 
 uint16_t TcpSegment::get_source_port() { return source_port; }
@@ -55,35 +57,32 @@ uint16_t TcpSegment::get_urg_ptr() { return urg_ptr; }
 
 shared_ptr<vector<uint8_t>> TcpSegment::get_payload() { return payload; }
 
-shared_ptr<Protocol> TcpSegment::get_inner_protocol() {
-	return nullptr;
-}
+shared_ptr<Protocol> TcpSegment::get_inner_protocol() { return nullptr; }
 
 string TcpSegment::get_description() {
-	stringstream desc_ss;
+  stringstream desc_ss;
 
-	desc_ss << "TCP Header" << endl;
+  desc_ss << "TCP Header" << endl;
 
-	desc_ss << "\tSource Port: " << dec << (int)source_port << endl;
-	desc_ss << "\tDestination Port: " << dec << (int)dest_port << endl;
-	desc_ss << "\tSequence: " << dec << (uint32_t)sequence << endl;
-	desc_ss << "\tACK Sequence: " << dec << (uint32_t)ack_sequence << endl;
-	desc_ss << "\tData Offset: " << dec << (int)data_offset << endl;
+  desc_ss << "\tSource Port: " << dec << (int)source_port << endl;
+  desc_ss << "\tDestination Port: " << dec << (int)dest_port << endl;
+  desc_ss << "\tSequence: " << dec << (uint32_t)sequence << endl;
+  desc_ss << "\tACK Sequence: " << dec << (uint32_t)ack_sequence << endl;
+  desc_ss << "\tData Offset: " << dec << (int)data_offset << endl;
 
-	desc_ss << "\tFlags: "
-		<< "[SYN - " << (bool)flag_syn << "], "
-		<< "[ACK - " << (bool)flag_ack << "], "
-		<< "[PSH - " << (bool)flag_psh << "]"
-		<< "[FIN - " << (bool)flag_fin << "]" << endl;
+  desc_ss << "\tFlags: "
+          << "[SYN - " << (bool)flag_syn << "], "
+          << "[ACK - " << (bool)flag_ack << "], "
+          << "[PSH - " << (bool)flag_psh << "]"
+          << "[FIN - " << (bool)flag_fin << "]" << endl;
 
-	auto inner_protocol = get_inner_protocol();
-	if (inner_protocol != nullptr)
-		desc_ss << inner_protocol->get_description();
-	else {
-		for (auto b : *payload)
-			desc_ss << (char)b;
-		desc_ss << endl;
-	}
+  auto inner_protocol = get_inner_protocol();
+  if (inner_protocol != nullptr)
+    desc_ss << inner_protocol->get_description();
+  else {
+    for (auto b : *payload) desc_ss << (char)b;
+    desc_ss << endl;
+  }
 
-	return desc_ss.str();
+  return desc_ss.str();
 }

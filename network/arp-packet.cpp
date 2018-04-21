@@ -1,10 +1,12 @@
-#include <stdexcept>
 #include <sstream>
+#include <stdexcept>
 #include <tuple>
 
 #include "../link/ethernet-frame.h"
 #include "../util.h"
 #include "arp-packet.h"
+
+using namespace sniff;
 
 tuple<string, string> get_hardware_addresses(shared_ptr<vector<uint8_t>> packet,
                                              uint8_t addr_len);
@@ -13,7 +15,7 @@ tuple<string, string> get_software_addresses(shared_ptr<vector<uint8_t>> packet,
 
 ArpPacket::ArpPacket(shared_ptr<vector<uint8_t>> packet) {
   if (packet == nullptr) throw runtime_error("Supplied ARP packet was null");
-	
+
   auto piter = packet->begin();
 
   hardware_type = ntohs(piter);
@@ -41,9 +43,7 @@ string ArpPacket::get_sender_protocol_addr() { return sender_protocol_addr; }
 string ArpPacket::get_target_hardware_addr() { return target_hardware_addr; }
 string ArpPacket::get_target_protocol_addr() { return target_protocol_addr; }
 
-shared_ptr<Protocol> ArpPacket::get_inner_protocol() {
-	return nullptr;
-}
+shared_ptr<Protocol> ArpPacket::get_inner_protocol() { return nullptr; }
 
 string ArpPacket::get_description() {
   stringstream result_ss;

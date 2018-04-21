@@ -3,15 +3,16 @@
 #ifndef LINUX_SOCKET_H_
 #define LINUX_SOCKET_H_
 
-#include <winsock2.h>
+#include <sys/socket.h>
 
 #include "../raw-socket.h"
 
+namespace sniff {
 class LinuxSocket : public RawSocket {
-public:
-	LinuxSocket(const sockaddr& bind_to);
-	~LinuxSocket() override;
+ public:
+  LinuxSocket(const sockaddr& bind_to);
+  ~LinuxSocket() override;
 };
-
-#endif 
+}  // namespace sniff
+#endif
 #endif

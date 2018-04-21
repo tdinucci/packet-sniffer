@@ -13,6 +13,7 @@ using namespace std;
 #define ETH_IP6 0x86dd
 #define ETH_ARP 0x0806
 
+namespace sniff {
 class EthernetFrame : public Protocol {
  private:
   string dest;
@@ -32,11 +33,11 @@ class EthernetFrame : public Protocol {
   string get_source();
   uint16_t get_protcol();
   uint16_t get_length();
-  
+
   shared_ptr<vector<uint8_t>> get_payload();
 
   shared_ptr<Protocol> get_inner_protocol() override;
   string get_description() override;
 };
-
+}  // namespace sniff
 #endif

@@ -7,17 +7,19 @@
 
 using namespace std;
 
+namespace sniff {
 class RawSocket {
-private:
-	static const int MAX_PACKET_SIZE = 65536;
+ private:
+  static const int MAX_PACKET_SIZE = 65536;
 
-protected:
-	uint64_t handle;
+ protected:
+  uint64_t handle;
 
-public:
-	virtual ~RawSocket() = 0;
+ public:
+  virtual ~RawSocket() = 0;
 
-	shared_ptr<vector<uint8_t>> read();
+  shared_ptr<vector<uint8_t>> read();
 };
+}  // namespace sniff
 
 #endif

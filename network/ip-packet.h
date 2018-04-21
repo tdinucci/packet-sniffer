@@ -1,8 +1,8 @@
 #ifndef IP_PACKET_H_
 #define IP_PACKET_H_
 
-#include <string>
 #include <memory>
+#include <string>
 
 #include "../protocol.h"
 #include "../util.h"
@@ -12,6 +12,7 @@
 
 using namespace std;
 
+namespace sniff {
 class IpPacket : public Protocol {
  private:
   uint8_t version;
@@ -49,5 +50,5 @@ class IpPacket : public Protocol {
   shared_ptr<Protocol> get_inner_protocol() override;
   string get_description() override;
 };
-
+}  // namespace sniff
 #endif

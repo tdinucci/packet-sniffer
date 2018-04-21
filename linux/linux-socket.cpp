@@ -1,24 +1,29 @@
 #ifndef _WIN32
 
-#include <linux/if_ether.h>
 #include <sys/socket.h>
+#include <unistd.h>
+#include <iostream>
 
-#include "linux-socket.h"
 #include "../util.h"
+#include "linux-socket.h"
+
+using namespace sniff;
+
+const uint16_t PROTOCOL_ALL =
+    0x0300;  // shifted for network order, actual value is 0x0003
+const uint16_t PROTOCOL_IP =
+    0x0008;  // shifted for network order, actual value is 0x0800
 
 LinuxSocket::LinuxSocket(const sockaddr& bind_to) {
-	handle = socket(AF_PACKET, SOCK_RAW, PROTOCOL_ALL);
-	if ((int)handle < 0)
-		throw runtime_error(*get_last_error("Failed to create socket"));
-
-	if (bind(handle, &bind_to, sizeof(bind_to)) == SOCKET_ERROR) {
-		throw runtime_error(*get_last_error("Bind failed"));
-	}
+  // we're just going to bind to all interfaces
+  handle = socket(AF_PACKET, SOCK_RAW, PROTOCOL_ALL);
+  if ((int)handle < 0)
+    throw runtime_error(*get_last_error("Failed to create socket"));
 }
 
 LinuxSocket::~LinuxSocket() {
-	int status = shutdown(sock, SHUT_RDWR);
-	// if (status == 0) { status = close(sock); }
+  int status = shutdown(handle, SHUT_RDWR);
+  if (status == 0) status = close(handle);
 }
 
 #endif

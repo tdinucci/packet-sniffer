@@ -9,6 +9,7 @@
 
 using namespace std;
 
+namespace sniff {
 class TcpSegment : public Protocol {
  private:
   uint16_t source_port;
@@ -59,5 +60,6 @@ class TcpSegment : public Protocol {
   shared_ptr<Protocol> get_inner_protocol() override;
   string get_description() override;
 };
+}  // namespace sniff
 
 #endif

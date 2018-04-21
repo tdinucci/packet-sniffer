@@ -4,8 +4,10 @@
 #include "linux/linux-bootstrapper.h"
 #endif
 
-#include <cstdint>
+#include <arpa/inet.h>
+
 #include <csignal>
+#include <cstdint>
 #include <cstring>
 #include <iostream>
 #include <memory>
@@ -17,34 +19,42 @@
 #include "raw-socket.h"
 
 using namespace std;
+using namespace sniff;
 
 unique_ptr<Bootstrapper> get_bootstrapper() {
-	unique_ptr<Bootstrapper> bootstrapper;
+  unique_ptr<Bootstrapper> bootstrapper;
 #ifdef _WIN32
-	bootstrapper = unique_ptr<Bootstrapper>(new WindowsBootstrapper());
+  bootstrapper = unique_ptr<Bootstrapper>(new WindowsBootstrapper());
 #else
-	bootstrapper = unique_ptr<Bootstrapper>(new LinuxBootstrapper());
-#endif 
-	return bootstrapper;
+  bootstrapper = unique_ptr<Bootstrapper>(new LinuxBootstrapper());
+#endif
+  return bootstrapper;
 }
 
 int main() {
-	auto bootstrapper = get_bootstrapper();
-	// could have the bootstrapper return the socket in a single call but having these things seperate is more flexible
-	auto net_iface = bootstrapper->get_network_iterface();
-	auto socket = bootstrapper->get_socket((sockaddr&)net_iface);
+  try {
+    auto bootstrapper = get_bootstrapper();
+    // could have the bootstrapper return the socket in a single call but having
+    // these things seperate is more flexible
+    auto net_iface = bootstrapper->get_network_iterface();
+    auto socket = bootstrapper->get_socket((sockaddr&)net_iface);
 
-	while (1) {
-		auto packet = socket->read();
+    while (1) {
+      auto packet = socket->read();
 
 #ifdef _WIN32
-		auto ip = unique_ptr<IpPacket>(new IpPacket(packet));
-		cout << ip->get_description() << endl;
+      auto ip = unique_ptr<IpPacket>(new IpPacket(packet));
+      cout << ip->get_description() << endl;
 #else
-		auto eth = unique_ptr<EthernetFrame>(new EthernetFrame(packet));
-		cout << eth->get_description() << endl;
-#endif  
-	}
+      auto eth = unique_ptr<EthernetFrame>(new EthernetFrame(packet));
+      cout << eth->get_description() << endl;
+#endif
+    }
 
-	return 0;
+    return 0;
+  } catch (const std::exception& e) {
+    cout << "An error occurred (ensure running as root): " << endl
+         << e.what() << endl;
+    return 1;
+  }
 }

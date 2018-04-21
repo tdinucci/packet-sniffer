@@ -7,11 +7,13 @@
 
 #include "../raw-socket.h"
 
+namespace sniff {
 class WindowsSocket : public RawSocket {
-public:
-	WindowsSocket(const sockaddr& bind_to);
-	~WindowsSocket() override;
+ public:
+  WindowsSocket(const sockaddr& bind_to);
+  ~WindowsSocket() override;
 };
+}  // namespace sniff
 
-#endif 
+#endif
 #endif

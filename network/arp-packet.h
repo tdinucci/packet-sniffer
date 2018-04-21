@@ -1,13 +1,14 @@
 #ifndef ARP_PACKET_H_
 #define ARP_PACKET_H_
 
-#include <vector>
 #include <cstdint>
 #include <string>
+#include <vector>
 #include "../protocol.h"
 
 using namespace std;
 
+namespace sniff {
 class ArpPacket : public Protocol {
  private:
   uint16_t hardware_type;
@@ -36,5 +37,5 @@ class ArpPacket : public Protocol {
   shared_ptr<Protocol> get_inner_protocol() override;
   string get_description() override;
 };
-
+}  // namespace sniff
 #endif
