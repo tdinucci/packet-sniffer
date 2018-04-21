@@ -4,9 +4,6 @@
 #include "linux/linux-bootstrapper.h"
 #endif
 
-#include <arpa/inet.h>
-
-#include <csignal>
 #include <cstdint>
 #include <cstring>
 #include <iostream>
