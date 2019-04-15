@@ -1,9 +1,0 @@
-﻿################################################################################
-# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
-################################################################################
-
-/.vs/packet-sniffer/v15
-/x64/Debug
-a.out
-sniff
-sniff_debug
